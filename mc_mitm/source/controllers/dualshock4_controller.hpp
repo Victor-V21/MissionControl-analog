@@ -233,6 +233,9 @@ namespace ams::controller {
             Dualshock4RumbleData m_rumble_state;
 
             Dualshock4ImuCalibrationData m_motion_calibration;
+
+            bool m_racing_mode_active = false;
+            u32 m_previous_buttons = 0;
     };
 
 }

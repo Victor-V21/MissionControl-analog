@@ -116,6 +116,31 @@ namespace ams::controller {
 
         m_buttons.ZR = src->input0x01.right_trigger > (m_trigger_threshold * TriggerMax);
         m_buttons.ZL = src->input0x01.left_trigger  > (m_trigger_threshold * TriggerMax);
+
+        bool share_l3_combo = src->input0x01.buttons.share && src->input0x01.buttons.L3;
+        bool combo_previous = (m_previous_buttons & 0x1);
+
+        if (share_l3_combo && !combo_previous) {
+            m_racing_mode_active = !m_racing_mode_active;
+        }
+
+        m_previous_buttons = share_l3_combo ? 0x1 : 0x0;
+
+        if (m_racing_mode_active) {
+            m_buttons.ZR = 0;
+            m_buttons.ZL = 0;
+
+            int net = static_cast<int>(src->input0x01.right_trigger) -
+                      static_cast<int>(src->input0x01.left_trigger);
+
+            int y_raw = SwitchAnalogStick::Center +
+                        (net * static_cast<int>(SwitchAnalogStick::Center)) / static_cast<int>(TriggerMax);
+
+            if (y_raw < SwitchAnalogStick::Min) y_raw = SwitchAnalogStick::Min;
+            if (y_raw > SwitchAnalogStick::Max) y_raw = SwitchAnalogStick::Max;
+
+            m_right_stick.SetData(SwitchAnalogStick::Center, static_cast<u16>(y_raw));
+        }
     }
 
     void Dualshock4Controller::MapInputReport0x11(const Dualshock4ReportData *src) {
@@ -144,6 +169,31 @@ namespace ams::controller {
 
         m_buttons.ZR = src->input0x11.right_trigger > (m_trigger_threshold * TriggerMax);
         m_buttons.ZL = src->input0x11.left_trigger  > (m_trigger_threshold * TriggerMax);
+
+        bool share_l3_combo = src->input0x11.buttons.share && src->input0x11.buttons.L3;
+        bool combo_previous = (m_previous_buttons & 0x1);
+
+        if (share_l3_combo && !combo_previous) {
+            m_racing_mode_active = !m_racing_mode_active;
+        }
+
+        m_previous_buttons = share_l3_combo ? 0x1 : 0x0;
+
+        if (m_racing_mode_active) {
+            m_buttons.ZR = 0;
+            m_buttons.ZL = 0;
+
+            int net = static_cast<int>(src->input0x11.right_trigger) -
+                      static_cast<int>(src->input0x11.left_trigger);
+
+            int y_raw = SwitchAnalogStick::Center +
+                        (net * static_cast<int>(SwitchAnalogStick::Center)) / static_cast<int>(TriggerMax);
+
+            if (y_raw < SwitchAnalogStick::Min) y_raw = SwitchAnalogStick::Min;
+            if (y_raw > SwitchAnalogStick::Max) y_raw = SwitchAnalogStick::Max;
+
+            m_right_stick.SetData(SwitchAnalogStick::Center, static_cast<u16>(y_raw));
+        }
 
         if (src->input0x11.buttons.touchpad) {
             for (int i = 0; i < src->input0x11.num_reports; ++i) {
