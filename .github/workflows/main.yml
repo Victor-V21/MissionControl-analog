@@ -18,12 +18,12 @@ jobs:
       with:
         submodules: recursive 
 
-    - name: Compilar el Sysmodule y Crear Release
+    - name: Compilar el Sysmodule
       run: |
-        make dist
+        make
 
     - name: Guardar el archivo compilado (Artifact)
       uses: actions/upload-artifact@v4
       with:
         name: MissionControl-Mod-Analogico
-        path: "*.zip"
+        path: atmosphere/
