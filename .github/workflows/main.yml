@@ -1,16 +1,14 @@
 name: Compilar Mission Control (Switch)
 
-# Esto hará que el código se compile automáticamente cada vez que guardes un cambio
 on:
   push:
     branches: [ "master", "main" ]
-  workflow_dispatch: # Te permite ejecutarlo manualmente con un botón
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
-    # ¡CRÍTICO! Usamos la imagen oficial de devkitPro para compilar para Switch
     container:
       image: devkitpro/devkita64:latest
 
@@ -18,19 +16,14 @@ jobs:
     - name: Descargar el código fuente
       uses: actions/checkout@v4
       with:
-        # ¡CRÍTICO! Mission Control usa repositorios externos, esto los descarga todos
         submodules: recursive 
 
-    - name: Compilar el Sysmodule
+    - name: Compilar el Sysmodule y Crear Release
       run: |
-        # Ejecuta el comando de compilación del creador original
-        make
+        make dist
 
     - name: Guardar el archivo compilado (Artifact)
       uses: actions/upload-artifact@v4
       with:
         name: MissionControl-Mod-Analogico
-        # Guardamos tanto el ZIP (si el Makefile lo genera) como la carpeta base
-        path: |
-          *.zip
-          atmosphere/
+        path: "*.zip"
